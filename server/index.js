@@ -69,7 +69,7 @@ app.post("/api/feedback", async (req, res) => {
     );
     res.status(201).json(result.rows[0]);
   }   catch (err) {
-    console.error("GET /api/feedback failed:", err);
+    console.error("POST /api/feedback failed:", err);
     res.status(500).json({
       error: err.message,
       code: err.code,
