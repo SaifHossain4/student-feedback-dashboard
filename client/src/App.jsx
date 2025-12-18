@@ -87,7 +87,7 @@ export default function App() {
 
   // ✅ Simple responsive-ish container padding
   return (
-    <div style={{ maxWidth: 700, margin: "40px auto", padding: 16, fontFamily: "Arial" }}>
+    <div style={{ maxWidth: 700, margin: "40px auto", padding: 24, fontFamily: "Arial" }}>
       <h1>Student Feedback Dashboard</h1>
 
       <h2>Student: Submit Feedback</h2>
