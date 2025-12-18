@@ -53,7 +53,7 @@ app.get("/api/feedback", async (req, res) => {
       res.status(500).json({
         error: err.message,
         code: err.code,
-        detail: err.detail,
+        
       });
     }
   });
