@@ -79,25 +79,41 @@ app.get("/api/feedback", async (req, res) => {
   
 
 // 2) POST new feedback
+// 2) POST new feedback
 app.post("/api/feedback", async (req, res) => {
-  try {
-    const { rating, comment } = req.body;
-    const result = await pool.query(
-      "INSERT INTO feedback (rating, comment) VALUES ($1, $2) RETURNING *;",
-      [rating, comment]
-    );
-    res.status(201).json(result.rows[0]);
-  }   catch (err) {
-    console.error("POST /api/feedback failed:", err);
-    res.status(500).json({
-      error: err.message,
-      code: err.code,
-      detail: err.detail,
-    });
-  }
-
+    try {
+      const { rating, comment } = req.body;
   
-});
+      // ✅ VALIDATION (ADD THIS PART)
+      if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+        return res.status(400).json({
+          error: "Rating must be an integer between 1 and 5",
+        });
+      }
+  
+      if (!comment || !comment.trim()) {
+        return res.status(400).json({
+          error: "Comment is required",
+        });
+      }
+      // ✅ END VALIDATION
+  
+      const result = await pool.query(
+        "INSERT INTO feedback (rating, comment) VALUES ($1, $2) RETURNING *;",
+        [rating, comment]
+      );
+  
+      res.status(201).json(result.rows[0]);
+    } catch (err) {
+      console.error("POST /api/feedback failed:", err);
+      res.status(500).json({
+        error: err.message,
+        code: err.code,
+        detail: err.detail,
+      });
+    }
+  });
+  
 
 // 3) DELETE feedback by id (simple admin action)
 app.delete("/api/feedback/:id", async (req, res) => {
