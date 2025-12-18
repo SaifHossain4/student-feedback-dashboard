@@ -57,6 +57,25 @@ app.get("/api/feedback", async (req, res) => {
       });
     }
   });
+
+  app.put("/api/feedback/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { rating, comment } = req.body;
+  
+      const result = await pool.query(
+        "UPDATE feedback SET rating=$1, comment=$2 WHERE id=$3 RETURNING *;",
+        [rating, comment, id]
+      );
+  
+      if (result.rows.length === 0) return res.status(404).json({ error: "Not found" });
+      res.json(result.rows[0]);
+    } catch (err) {
+      console.error("PUT /api/feedback failed:", err);
+      res.status(500).json({ error: err.message, code: err.code });
+    }
+  });
+  
   
 
 // 2) POST new feedback
