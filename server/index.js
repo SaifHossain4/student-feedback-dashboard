@@ -126,6 +126,32 @@ app.delete("/api/feedback/:id", async (req, res) => {
   }
 });
 
+app.put("/api/feedback/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { rating, comment } = req.body;
+  
+      if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+        return res.status(400).json({ error: "Rating must be an integer 1-5" });
+      }
+      if (!comment || !comment.trim()) {
+        return res.status(400).json({ error: "Comment is required" });
+      }
+  
+      const result = await pool.query(
+        "UPDATE feedback SET rating=$1, comment=$2 WHERE id=$3 RETURNING *;",
+        [rating, comment, id]
+      );
+  
+      if (result.rows.length === 0) return res.status(404).json({ error: "Not found" });
+      res.json(result.rows[0]);
+    } catch (err) {
+      console.error("PUT /api/feedback failed:", err);
+      res.status(500).json({ error: err.message, code: err.code });
+    }
+  });
+  
+
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => console.log(`Server running on ${PORT}`));
